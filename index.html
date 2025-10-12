@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stocks made Simple</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <!-- LEFT: hero + lists (unchanged core layout) -->
+    <section class="card hero">
+      <h1>Stocks made Simple.</h1>
+
+      <div class="search">
+        <input id="search" type="search" placeholder="Search stocks (name or symbol)" />
+        <button id="searchBtn" aria-label="Search">🔍</button>
+      </div>
+
+      <div id="autoResults" class="list" style="display:none"></div>
+      <div id="selected" class="ticker-card" style="display:none"></div>
+
+      <h3 class="section-title">Popular</h3>
+      <div class="divider"></div>
+      <div id="popular" class="list"></div>
+    </section>
+
+    <!-- RIGHT: sector accordion -->
+    <aside class="card">
+      <div class="accordion">
+        <!-- Each .acc-item has a button + hidden panel -->
+        <div class="acc-item" data-sector="Consumer Discretionary">
+          <button class="acc-btn">
+            <span class="acc-icon">
+              <img src="/images/icons/consumer.svg" alt="Consumer" />
+            </span>
+            <span class="acc-label">Consumer</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel">
+            <div class="sml muted">Top performers will appear here.</div>
+          </div>
+        </div>
+
+        <div class="acc-item" data-sector="Energy">
+          <button class="acc-btn">
+          <span class="acc-icon">
+              <img src="/images/icons/energy.svg" alt="Energy" />
+          </span>            
+            <span class="acc-label">Energy</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel"><div class="sml muted">Top performers will appear here.</div></div>
+        </div>
+
+        <div class="acc-item" data-sector="Financials">
+          <button class="acc-btn">
+            <span class="acc-icon">
+              <img src="/images/icons/finance.svg" alt="Finance" />
+          </span> 
+            <span class="acc-label">Finance</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel"><div class="sml muted">Top performers will appear here.</div></div>
+        </div>
+
+        <div class="acc-item" data-sector="Health Care">
+          <button class="acc-btn">
+            <span class="acc-icon">
+              <img src="/images/icons/healthcare.svg" alt="Healthcare" />
+          </span>
+            <span class="acc-label">Healthcare</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel"><div class="sml muted">Top performers will appear here.</div></div>
+        </div>
+
+        <div class="acc-item" data-sector="Industrials">
+          <button class="acc-btn">
+          <span class="acc-icon">
+              <img src="/images/icons/industrials.svg" alt="Industrials" />
+          </span>
+            <span class="acc-label">Industrials</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel"><div class="sml muted">Top performers will appear here.</div></div>
+        </div>
+
+        <div class="acc-item" data-sector="Materials">
+          <button class="acc-btn">
+            <span class="acc-icon">
+              <img src="/images/icons/materials.svg" alt="Materials" />
+          </span>
+            <span class="acc-label">Materials</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel"><div class="sml muted">Top performers will appear here.</div></div>
+        </div>
+
+        <div class="acc-item" data-sector="Technology">
+          <button class="acc-btn">
+            <span class="acc-icon">
+              <img src="/images/icons/technology.svg" alt="Technology" />
+          </span>
+            <span class="acc-label">Technology</span>
+            <span class="acc-arrow">▾</span>
+          </button>
+          <div class="acc-panel"><div class="sml muted">Top performers will appear here.</div></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="main.js"></script>
+</body>
+</html>
