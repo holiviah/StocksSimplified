@@ -10,18 +10,33 @@ form.addEventListener("submit", async (e) => {
   results.innerHTML = `<div class="loading">Searching "${q}"...</div>`;
 
   try {
-    // Step 1: Search for companies using Wikidata
-    const discResponse = await fetch(`/api/discover?q=${encodeURIComponent(q)}`);
-    if (!discResponse.ok) {
-      throw new Error(`Search failed: ${discResponse.status}`);
+    // Determine if this is a stock symbol search or industry search
+    const isStockSymbol = /^[A-Z]{1,5}$/i.test(q) || q.length <= 5;
+    
+    let disc;
+    if (isStockSymbol) {
+      // Direct stock symbol search
+      console.log("Searching for stock symbol:", q);
+      const discResponse = await fetch(`/api/search-stock?q=${encodeURIComponent(q)}`);
+      if (!discResponse.ok) {
+        throw new Error(`Stock search failed: ${discResponse.status}`);
+      }
+      disc = await discResponse.json();
+    } else {
+      // Industry search using Wikidata
+      console.log("Searching for industry:", q);
+      const discResponse = await fetch(`/api/discover?q=${encodeURIComponent(q)}`);
+      if (!discResponse.ok) {
+        throw new Error(`Industry search failed: ${discResponse.status}`);
+      }
+      disc = await discResponse.json();
     }
-    const disc = await discResponse.json();
     
     console.log("Discovered companies:", disc);
     let companies = disc.companies.filter(c => c.ticker).slice(0, 8);
 
-    // Step 2: If too few have tickers, try resolving a few by name using Finnhub
-    if (companies.length < 6) {
+    // If too few have tickers, try resolving a few by name using Finnhub
+    if (companies.length < 6 && !isStockSymbol) {
       const noTicker = disc.companies.filter(c => !c.ticker).slice(0, 10);
       for (const c of noTicker) {
         try {
@@ -39,11 +54,12 @@ form.addEventListener("submit", async (e) => {
     }
 
     if (companies.length === 0) {
-      results.innerHTML = `<div class="error">No companies found for "${q}". Try searching for an industry like "technology", "healthcare", or "finance".</div>`;
+      const searchType = isStockSymbol ? "stock symbol" : "industry";
+      results.innerHTML = `<div class="error">No companies found for "${q}". Try searching for a ${searchType === "stock symbol" ? "different symbol like AAPL, MSFT, GOOGL" : "different industry like technology, healthcare, or finance"}.</div>`;
       return;
     }
 
-    // Step 3: Fetch detailed data using Polygon.io and Finnhub
+    // Fetch detailed data using Polygon.io and Finnhub
     results.innerHTML = `<div class="loading">Loading stock data...</div>`;
     
     const cards = await Promise.all(companies.map(async c => {
