@@ -6,28 +6,73 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const q = input.value.trim();
   if (!q) return;
-  results.innerHTML = `<div class="loading">Searching “${q}”...</div>`;
+  
+  results.innerHTML = `<div class="loading">Searching "${q}"...</div>`;
 
-  const disc = await fetch(`/api/discover?q=${encodeURIComponent(q)}`).then(r => r.json());
-  let companies = disc.companies.filter(c => c.ticker).slice(0, 8);
-
-  // If too few have tickers, try resolving a few by name
-  if (companies.length < 6) {
-    const noTicker = disc.companies.filter(c => !c.ticker).slice(0, 10);
-    for (const c of noTicker) {
-      const matches = await fetch(`/api/resolve?name=${encodeURIComponent(c.name)}`).then(r => r.json());
-      const best = matches.find(m => m.symbol && m.description?.toLowerCase().includes(c.name.toLowerCase()));
-      if (best) companies.push({ ...c, ticker: best.symbol });
-      if (companies.length >= 8) break;
+  try {
+    // Step 1: Search for companies using Wikidata
+    const discResponse = await fetch(`/api/discover?q=${encodeURIComponent(q)}`);
+    if (!discResponse.ok) {
+      throw new Error(`Search failed: ${discResponse.status}`);
     }
+    const disc = await discResponse.json();
+    
+    console.log("Discovered companies:", disc);
+    let companies = disc.companies.filter(c => c.ticker).slice(0, 8);
+
+    // Step 2: If too few have tickers, try resolving a few by name using Finnhub
+    if (companies.length < 6) {
+      const noTicker = disc.companies.filter(c => !c.ticker).slice(0, 10);
+      for (const c of noTicker) {
+        try {
+          const resolveResponse = await fetch(`/api/resolve?name=${encodeURIComponent(c.name)}`);
+          if (resolveResponse.ok) {
+            const matches = await resolveResponse.json();
+            const best = matches.find(m => m.symbol && m.description?.toLowerCase().includes(c.name.toLowerCase()));
+            if (best) companies.push({ ...c, ticker: best.symbol });
+            if (companies.length >= 8) break;
+          }
+        } catch (err) {
+          console.warn(`Failed to resolve ${c.name}:`, err);
+        }
+      }
+    }
+
+    if (companies.length === 0) {
+      results.innerHTML = `<div class="error">No companies found for "${q}". Try searching for an industry like "technology", "healthcare", or "finance".</div>`;
+      return;
+    }
+
+    // Step 3: Fetch detailed data using Polygon.io and Finnhub
+    results.innerHTML = `<div class="loading">Loading stock data...</div>`;
+    
+    const cards = await Promise.all(companies.map(async c => {
+      try {
+        const cardResponse = await fetch(`/api/card/${c.ticker}`);
+        if (!cardResponse.ok) {
+          throw new Error(`Failed to fetch data for ${c.ticker}`);
+        }
+        const data = await cardResponse.json();
+        return { meta: c, data };
+      } catch (err) {
+        console.warn(`Failed to fetch card for ${c.ticker}:`, err);
+        return null;
+      }
+    }));
+
+    const validCards = cards.filter(c => c !== null);
+    
+    if (validCards.length === 0) {
+      results.innerHTML = `<div class="error">Found companies but couldn't load stock data. Please check your API keys.</div>`;
+      return;
+    }
+
+    results.innerHTML = validCards.map(renderCard).join("");
+    
+  } catch (error) {
+    console.error("Search error:", error);
+    results.innerHTML = `<div class="error">Search failed: ${error.message}</div>`;
   }
-
-  // Fetch cards
-  const cards = await Promise.all(companies.map(c =>
-    fetch(`/api/card/${c.ticker}`).then(r => r.json()).then(data => ({ meta: c, data }))
-  ));
-
-  results.innerHTML = cards.map(renderCard).join("");
 });
 
 function renderCard({ meta, data }) {

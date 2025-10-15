@@ -89,6 +89,25 @@ body {
   gap: 16px;
 }
 
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+
+.loading {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.error {
+  color: #9a0415;
+  background: rgba(154, 4, 21, 0.1);
+  border-color: rgba(154, 4, 21, 0.2);
+}
+
 .card {
   text-align: left;
   background: rgba(255, 255, 255, 0.8);
