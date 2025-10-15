@@ -141,4 +141,11 @@ app.get("/api/card/:symbol", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
+
+// Only start server if not in Vercel environment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
+}
+
+// Export for Vercel
+export default app;
