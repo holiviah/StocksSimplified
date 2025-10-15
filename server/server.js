@@ -119,6 +119,46 @@ app.get("/api/search-stock", async (req, res) => {
   }
 });
 
+// 3) Company name search
+app.get("/api/search-company", async (req, res) => {
+  try {
+    const q = (req.query.q || "").trim();
+    if (!q) return res.status(400).json({ error: "Missing q" });
+    
+    if (!FINNHUB_KEY) {
+      throw new Error("FINNHUB_KEY not configured");
+    }
+    
+    // Search for company by name
+    const searchResponse = await fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(q)}&token=${FINNHUB_KEY}`);
+    
+    if (!searchResponse.ok) {
+      throw new Error(`Finnhub API error: ${searchResponse.status}`);
+    }
+    
+    const searchData = await searchResponse.json();
+    const results = searchData.result || [];
+    
+    // Filter for companies that match the name
+    const companyMatches = results.filter(r => 
+      r.description?.toLowerCase().includes(q.toLowerCase()) ||
+      r.symbol?.toLowerCase().includes(q.toLowerCase())
+    ).slice(0, 8);
+    
+    const companies = companyMatches.map(r => ({
+      name: r.description || r.symbol,
+      ticker: r.symbol,
+      exchange: null,
+      industry: null
+    }));
+    
+    res.json({ query: q, companies });
+  } catch (error) {
+    console.error("Company search API error:", error);
+    res.status(500).json({ error: "Failed to search company", details: error.message });
+  }
+});
+
 // 3) If a company has no ticker, try to resolve via Finnhub search
 app.get("/api/resolve", async (req, res) => {
   try {

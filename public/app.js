@@ -10,8 +10,9 @@ form.addEventListener("submit", async (e) => {
   results.innerHTML = `<div class="loading">Searching "${q}"...</div>`;
 
   try {
-    // Determine if this is a stock symbol search or industry search
-    const isStockSymbol = /^[A-Z]{1,5}$/i.test(q) || q.length <= 5;
+    // Determine search type based on input
+    const isStockSymbol = /^[A-Z]{1,5}$/i.test(q) && q.length <= 5;
+    const isCompanyName = /^[A-Za-z\s&.,-]+$/.test(q) && q.length > 3 && !isStockSymbol;
     
     let disc;
     if (isStockSymbol) {
@@ -20,6 +21,14 @@ form.addEventListener("submit", async (e) => {
       const discResponse = await fetch(`/api/search-stock?q=${encodeURIComponent(q)}`);
       if (!discResponse.ok) {
         throw new Error(`Stock search failed: ${discResponse.status}`);
+      }
+      disc = await discResponse.json();
+    } else if (isCompanyName) {
+      // Company name search
+      console.log("Searching for company name:", q);
+      const discResponse = await fetch(`/api/search-company?q=${encodeURIComponent(q)}`);
+      if (!discResponse.ok) {
+        throw new Error(`Company search failed: ${discResponse.status}`);
       }
       disc = await discResponse.json();
     } else {
@@ -36,7 +45,7 @@ form.addEventListener("submit", async (e) => {
     let companies = disc.companies.filter(c => c.ticker).slice(0, 8);
 
     // If too few have tickers, try resolving a few by name using Finnhub
-    if (companies.length < 6 && !isStockSymbol) {
+    if (companies.length < 6 && !isStockSymbol && !isCompanyName) {
       const noTicker = disc.companies.filter(c => !c.ticker).slice(0, 10);
       for (const c of noTicker) {
         try {
@@ -54,8 +63,15 @@ form.addEventListener("submit", async (e) => {
     }
 
     if (companies.length === 0) {
-      const searchType = isStockSymbol ? "stock symbol" : "industry";
-      results.innerHTML = `<div class="error">No companies found for "${q}". Try searching for a ${searchType === "stock symbol" ? "different symbol like AAPL, MSFT, GOOGL" : "different industry like technology, healthcare, or finance"}.</div>`;
+      let suggestion = "";
+      if (isStockSymbol) {
+        suggestion = "different symbol like AAPL, MSFT, GOOGL";
+      } else if (isCompanyName) {
+        suggestion = "different company name like Apple, Microsoft, Tesla";
+      } else {
+        suggestion = "different industry like technology, healthcare, or finance";
+      }
+      results.innerHTML = `<div class="error">No companies found for "${q}". Try searching for a ${suggestion}.</div>`;
       return;
     }
 
