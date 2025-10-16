@@ -24,7 +24,7 @@ const FINNHUB_KEY = process.env.FINNHUB_KEY;
 // --- Helper
 const j = (r) => r.json();
 
-// 1) Interest → companies (Wikidata)
+//Interest(Wikidata)
 app.get("/api/discover", async (req, res) => {
   try {
     const q = (req.query.q || "").trim();
@@ -64,7 +64,7 @@ app.get("/api/discover", async (req, res) => {
       industry: b.industryLabel?.value || null
     }));
 
-    // De-dup; keep entries with tickers first
+    //Tickers
     const map = new Map();
     for (const c of companies) {
       const key = (c.ticker || c.name).toLowerCase();
@@ -78,7 +78,7 @@ app.get("/api/discover", async (req, res) => {
   }
 });
 
-// 2) Direct stock symbol search
+//Stock symbol search
 app.get("/api/search-stock", async (req, res) => {
   try {
     const q = (req.query.q || "").trim().toUpperCase();
@@ -119,7 +119,7 @@ app.get("/api/search-stock", async (req, res) => {
   }
 });
 
-// 3) Company name search
+//Company name search
 app.get("/api/search-company", async (req, res) => {
   try {
     const q = (req.query.q || "").trim();
@@ -129,7 +129,7 @@ app.get("/api/search-company", async (req, res) => {
       throw new Error("FINNHUB_KEY not configured");
     }
     
-    // Search for company by name
+    //Search for company by name
     const searchResponse = await fetch(`https://finnhub.io/api/v1/search?q=${encodeURIComponent(q)}&token=${FINNHUB_KEY}`);
     
     if (!searchResponse.ok) {
@@ -159,7 +159,7 @@ app.get("/api/search-company", async (req, res) => {
   }
 });
 
-// 3) If a company has no ticker, try to resolve via Finnhub search
+//Resolve via Finnhub search
 app.get("/api/resolve", async (req, res) => {
   try {
     const name = (req.query.name || "").trim();
@@ -183,7 +183,7 @@ app.get("/api/resolve", async (req, res) => {
   }
 });
 
-// 3) Aggregate a "card" for one ticker
+//A card for one ticker
 app.get("/api/card/:symbol", async (req, res) => {
   try {
     const symbol = req.params.symbol.toUpperCase();
@@ -223,10 +223,7 @@ app.get("/api/card/:symbol", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Only start server if not in Vercel environment
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`Server on http://localhost:${PORT}`));
 }
-
-// Export for Vercel
 export default app;
