@@ -22,20 +22,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 60px;
+  padding-top: 240px;
 }
 
 /* --- Main Container --- */
 .panel {
   background: var(--glass);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   padding: 40px 50px 50px;
-  max-width: 600px;
-  width: 90%;
+  max-width: 1000px;
+  width: 100%;
   text-align: center;
 }
 

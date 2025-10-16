@@ -157,7 +157,7 @@ function renderCard({ meta, data }) {
       <ul>
         <li><b>Close:</b> last traded price from the previous trading day.</li>
         <li><b>% Change:</b> today vs yesterday’s close.</li>
-        <li><b>Dividend:</b> cash paid per share; ex-date = must own before to receive.</li>
+        <li><b>Dividend:</b> cash paid per share, ex-date = must own before to receive.</li>
       </ul>
     </details>
   </div>`;
