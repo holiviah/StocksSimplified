@@ -22,7 +22,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 240px;
+  padding-top: 160px;
 }
 
 /* --- Main Container --- */
@@ -120,6 +120,14 @@ body {
 .card:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.card .logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .card .name {
