@@ -126,7 +126,6 @@ function renderCard({ meta, data }) {
   return `
   <div class="card">
     <div class="card-hd">
-      <img class="logo" src="${logo}" alt="" />
       <div>
         <div class="name">${name} <span class="sym">${data.symbol}</span></div>
         <div class="sub">${p.finnhubIndustry || meta.industry || ""}</div>
@@ -135,6 +134,7 @@ function renderCard({ meta, data }) {
         <div class="now">$${price}</div>
         <div class="chg ${q.dp >= 0 ? "up" : "down"}">${change}</div>
       </div>
+      <img class="logo" src="${logo}" alt="" />
     </div>
 
     <div class="row">
