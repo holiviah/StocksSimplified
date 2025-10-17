@@ -3,7 +3,9 @@ const input = document.querySelector("#searchInput");
 const results = document.querySelector("#results");
 const popularList = document.querySelector("#popularList");
 const clearBtn = document.querySelector("#clearBtn");
-// removed modal references
+const modal = document.querySelector('#modal');
+const modalClose = document.querySelector('#modalClose');
+const modalContent = document.querySelector('#modalContent');
 
 // Preload a few popular tickers on homepage
 const POPULAR = [
