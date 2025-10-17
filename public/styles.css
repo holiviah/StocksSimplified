@@ -95,6 +95,14 @@ body {
   font-size: 18px;
 }
 
+/* Clear (X) button on the left of the input */
+#clearBtn {
+  left: 10px;
+  right: auto;
+}
+
+.hidden { display: none !important; }
+
 #results {
   margin-top: 20px;
   display: grid;

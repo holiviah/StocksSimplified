@@ -2,6 +2,7 @@ const form = document.querySelector("#searchForm");
 const input = document.querySelector("#searchInput");
 const results = document.querySelector("#results");
 const popularList = document.querySelector("#popularList");
+const clearBtn = document.querySelector("#clearBtn");
 
 // Preload a few popular tickers on homepage
 const POPULAR = [
@@ -27,6 +28,18 @@ if (popularList) {
     form.dispatchEvent(new Event("submit"));
   });
 }
+
+function showHome() {
+  input.value = "";
+  results.innerHTML = "";
+  document.querySelector(".popular")?.classList.remove("hidden");
+  clearBtn?.classList.add("hidden");
+}
+
+clearBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  showHome();
+});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -154,6 +167,8 @@ form.addEventListener("submit", async (e) => {
     }
 
     results.innerHTML = displayable.map(renderCard).join("");
+    document.querySelector(".popular")?.classList.add("hidden");
+    clearBtn?.classList.remove("hidden");
     
   } catch (error) {
     console.error("Search error:", error);
