@@ -85,6 +85,7 @@ body {
 
 #searchForm button {
   position: absolute;
+  right: 2px;
   height: 48px;
   width: 48px;
   border-radius: 999px;
@@ -94,8 +95,8 @@ body {
   font-size: 18px;
 }
 
-#clearBtn { left: auto; right: 0px; }
-#searchBtn { left: auto; right: 0px; }
+#clearBtn { left: auto; right: 2px; }
+#searchBtn { left: auto; right: 2px; }
 
 .hidden { display: none !important; }
 
