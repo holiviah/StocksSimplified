@@ -99,7 +99,23 @@ form.addEventListener("submit", async (e) => {
       return;
     }
 
-    results.innerHTML = validCards.map(renderCard).join("");
+    // Filter to only those with sufficient market data to render a price
+    const displayable = validCards.filter(({ data }) => {
+      const q = data.quote || {};
+      const prev = data.prev || {};
+      const candles = Array.isArray(data.candles) ? data.candles : [];
+      const hasQuote = q.c != null;
+      const hasPrev = prev && prev.c != null;
+      const hasCandles = candles.length > 0;
+      return hasQuote || hasPrev || hasCandles;
+    });
+
+    if (displayable.length === 0) {
+      results.innerHTML = `<div class="error">Found companies but none had sufficient market data to display. Try a different query or check API limits.</div>`;
+      return;
+    }
+
+    results.innerHTML = displayable.map(renderCard).join("");
     
   } catch (error) {
     console.error("Search error:", error);
