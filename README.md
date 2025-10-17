@@ -18,6 +18,6 @@ Users can:
 ## Data Sources
 This project integrates multiple APIs to provide accurate data:
 
-[**Finnhub API**](https://finnhub.io) – for company and stock data  
-[**Polygon API**](https://polygon.io) – for real-time stock pricing  
+[**Finnhub API**](https://finnhub.io) – for company and real-time stock data  
+[**Polygon API**](https://polygon.io) – for past trends and dividend info 
 [**Wikidata API**](https://www.wikidata.org) – for company and industry discovery 
