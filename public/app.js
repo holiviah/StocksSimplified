@@ -247,15 +247,13 @@ function renderCard({ meta, data }) {
   </div>`;
 }
 
-// Open modal when a card is clicked
 results.addEventListener('click', (e) => {
   const card = e.target.closest('.card');
   if (!card) return;
   const symEl = card.querySelector('.sym');
   const symbol = symEl ? symEl.textContent.trim() : null;
   if (!symbol) return;
-  const points = card.querySelector('.spark')?.getAttribute('data-points') || '';
-  openModal(symbol, points);
+  openModal(symbol);
 });
 
 modalClose?.addEventListener('click', closeModal);
@@ -268,39 +266,61 @@ function closeModal() {
   modalContent.innerHTML = '';
 }
 
-function openModal(symbol, pointsCSV) {
-  const points = pointsCSV.split(',').map(v => Number(v)).filter(v => !Number.isNaN(v));
-  modalContent.innerHTML = renderModal(symbol, points);
+async function openModal(symbol) {
+  modalContent.innerHTML = `<div class="pad">Loading ${symbol}…</div>`;
   modal?.classList.remove('hidden');
+  try {
+    const r = await fetch(`/api/card/${symbol}`);
+    if (!r.ok) throw new Error(`Failed to load ${symbol}`);
+    const data = await r.json();
+    const candles = Array.isArray(data.candles) ? data.candles : [];
+    const closes = candles.map(c => c.c).filter(v => v != null);
+    modalContent.innerHTML = renderModalFromData(data, closes);
+  } catch (err) {
+    console.error('Modal load error', err);
+    modalContent.innerHTML = `<div class="pad">Failed to load data for ${symbol}.</div>`;
+  }
 }
 
-function renderModal(symbol, closes) {
-  if (!closes || closes.length === 0) {
-    return `<div class="pad"><b>${symbol}</b><div>No chart data available.</div></div>`;
-  }
+function renderModalFromData(data, closes) {
+  const p = data.profile || {};
+  const q = data.quote || {};
+  const prev = data.prev || {};
+  const name = p.name || data.symbol;
+  const last = (q.c != null) ? Number(q.c)
+    : (closes && closes.length ? Number(closes[closes.length-1])
+    : (prev?.c != null ? Number(prev.c) : null));
+
   const w = 800, h = 320, pad = 30;
-  const min = Math.min(...closes), max = Math.max(...closes);
-  const x = (i) => pad + (i / (closes.length - 1)) * (w - pad * 2);
-  const y = (v) => pad + (1 - (v - min) / (max - min || 1)) * (h - pad * 2);
-  const d = closes.map((v,i) => `${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ');
-  const area = `M${x(0)},${y(closes[0])} ` + closes.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(closes.length-1)},${h-pad} L${x(0)},${h-pad} Z`;
-  const last = closes[closes.length-1];
+  let chart = `<div class=\"pad\">No chart data available.</div>`;
+  if (closes && closes.length) {
+    const min = Math.min(...closes), max = Math.max(...closes);
+    const x = (i) => pad + (i / (closes.length - 1)) * (w - pad * 2);
+    const y = (v) => pad + (1 - (v - min) / (max - min || 1)) * (h - pad * 2);
+    const d = closes.map((v,i) => `${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ');
+    const area = `M${x(0)},${y(closes[0])} ` + closes.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(closes.length-1)},${h-pad} L${x(0)},${h-pad} Z`;
+    chart = `
+    <svg class=\"chart\" viewBox=\"0 0 ${w} ${h}\" preserveAspectRatio=\"none\">
+      <defs>
+        <linearGradient id=\"grad\" x1=\"0\" x2=\"0\" y1=\"0\" y2=\"1\">
+          <stop offset=\"0%\" stop-color=\"#22c55e\" stop-opacity=\"0.35\"/>
+          <stop offset=\"100%\" stop-color=\"#22c55e\" stop-opacity=\"0\"/>
+        </linearGradient>
+      </defs>
+      <rect x=\"${pad}\" y=\"${pad}\" width=\"${w-pad*2}\" height=\"${h-pad*2}\" fill=\"#fafafa\" stroke=\"#eee\" />
+      <path d=\"${area}\" fill=\"url(#grad)\" stroke=\"none\"/>
+      <path d=\"${d}\" fill=\"none\" stroke=\"#16a34a\" stroke-width=\"2\"/>
+    </svg>`;
+  }
+
   return `
-  <div class="pad">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <div style="font-weight:800;font-size:18px;">${symbol}</div>
-      <div style="color:#5b5b5b;">Last: $${last.toFixed(2)}</div>
+    <div class=\"pad\">
+      <div style=\"display:flex;align-items:center;gap:12px;\">
+        <div style=\"font-weight:800;font-size:18px;\">${data.symbol}</div>
+        <div style=\"color:#5b5b5b;\">${name}</div>
+      </div>
+      <div style=\"margin-top:6px;font-weight:800;font-size:22px;\">${last != null ? `$${last.toFixed(2)}` : ''}</div>
     </div>
-  </div>
-  <svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
-    <defs>
-      <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.35"/>
-        <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <rect x="${pad}" y="${pad}" width="${w-pad*2}" height="${h-pad*2}" fill="#fafafa" stroke="#eee" />
-    <path d="${area}" fill="url(#grad)" stroke="none"/>
-    <path d="${d}" fill="none" stroke="#16a34a" stroke-width="2"/>
-  </svg>`;
+    ${chart}
+  `;
 }
