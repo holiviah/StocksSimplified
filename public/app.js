@@ -3,6 +3,9 @@ const input = document.querySelector("#searchInput");
 const results = document.querySelector("#results");
 const popularList = document.querySelector("#popularList");
 const clearBtn = document.querySelector("#clearBtn");
+const modal = document.querySelector('#modal');
+const modalClose = document.querySelector('#modalClose');
+const modalContent = document.querySelector('#modalContent');
 
 // Preload a few popular tickers on homepage
 const POPULAR = [
@@ -242,4 +245,62 @@ function renderCard({ meta, data }) {
 
     
   </div>`;
+}
+
+// Open modal when a card is clicked
+results.addEventListener('click', (e) => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  const symEl = card.querySelector('.sym');
+  const symbol = symEl ? symEl.textContent.trim() : null;
+  if (!symbol) return;
+  const points = card.querySelector('.spark')?.getAttribute('data-points') || '';
+  openModal(symbol, points);
+});
+
+modalClose?.addEventListener('click', closeModal);
+modal?.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-backdrop')) closeModal();
+});
+
+function closeModal() {
+  modal?.classList.add('hidden');
+  modalContent.innerHTML = '';
+}
+
+function openModal(symbol, pointsCSV) {
+  const points = pointsCSV.split(',').map(v => Number(v)).filter(v => !Number.isNaN(v));
+  modalContent.innerHTML = renderModal(symbol, points);
+  modal?.classList.remove('hidden');
+}
+
+function renderModal(symbol, closes) {
+  if (!closes || closes.length === 0) {
+    return `<div class="pad"><b>${symbol}</b><div>No chart data available.</div></div>`;
+  }
+  const w = 800, h = 320, pad = 30;
+  const min = Math.min(...closes), max = Math.max(...closes);
+  const x = (i) => pad + (i / (closes.length - 1)) * (w - pad * 2);
+  const y = (v) => pad + (1 - (v - min) / (max - min || 1)) * (h - pad * 2);
+  const d = closes.map((v,i) => `${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ');
+  const area = `M${x(0)},${y(closes[0])} ` + closes.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(closes.length-1)},${h-pad} L${x(0)},${h-pad} Z`;
+  const last = closes[closes.length-1];
+  return `
+  <div class="pad">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-weight:800;font-size:18px;">${symbol}</div>
+      <div style="color:#5b5b5b;">Last: $${last.toFixed(2)}</div>
+    </div>
+  </div>
+  <svg class="chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <rect x="${pad}" y="${pad}" width="${w-pad*2}" height="${h-pad*2}" fill="#fafafa" stroke="#eee" />
+    <path d="${area}" fill="url(#grad)" stroke="none"/>
+    <path d="${d}" fill="none" stroke="#16a34a" stroke-width="2"/>
+  </svg>`;
 }
