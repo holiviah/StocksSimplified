@@ -99,23 +99,7 @@ form.addEventListener("submit", async (e) => {
       return;
     }
 
-    // Filter to only those with sufficient market data to render a price
-    const displayable = validCards.filter(({ data }) => {
-      const q = data.quote || {};
-      const prev = data.prev || {};
-      const candles = Array.isArray(data.candles) ? data.candles : [];
-      const hasQuote = q.c != null;
-      const hasPrev = prev && prev.c != null;
-      const hasCandles = candles.length > 0;
-      return hasQuote || hasPrev || hasCandles;
-    });
-
-    if (displayable.length === 0) {
-      results.innerHTML = `<div class="error">Found companies but none had sufficient market data to display. Try a different query or check API limits.</div>`;
-      return;
-    }
-
-    results.innerHTML = displayable.map(renderCard).join("");
+    results.innerHTML = validCards.map(renderCard).join("");
     
   } catch (error) {
     console.error("Search error:", error);
@@ -130,24 +114,14 @@ function renderCard({ meta, data }) {
   const candles = data.candles || [];
   const div = (data.dividends || [])[0];
 
-  const lastCandleClose = candles.length ? candles[candles.length - 1]?.c : null;
-  const rawPrice = (q.c != null) ? q.c : (lastCandleClose != null ? lastCandleClose : (prev?.c != null ? prev.c : null));
-  const price = rawPrice != null ? Number(rawPrice).toFixed(2) : "—";
-
-  const prevCloseVal = prev?.c != null ? Number(prev.c) : null;
-  let changeNum = null;
-  if (q.dp != null) {
-    changeNum = Number(q.dp);
-  } else if (rawPrice != null && prevCloseVal != null && prevCloseVal !== 0) {
-    changeNum = ((Number(rawPrice) - prevCloseVal) / prevCloseVal) * 100;
-  }
-  const change = changeNum != null ? `${changeNum.toFixed(2)}%` : "—";
+  const price = q.c ?? q.c?.toFixed?.(2) ?? "—";
+  const change = q.dp != null ? `${q.dp.toFixed(2)}%` : "—";
   const logo = p.logo || "https://via.placeholder.com/40";
   const name = p.name || meta.name || meta.ticker || data.symbol;
 
   // tiny sparkline values
   const points = candles.map(c => c.c).join(",");
-  const yesterdayClose = prevCloseVal != null ? Number(prevCloseVal).toFixed(2) : "—";
+  const yesterdayClose = prev.c ?? "—";
 
   return `
   <div class="card">
@@ -158,7 +132,7 @@ function renderCard({ meta, data }) {
       </div>
       <div class="price">
         <div class="now">$${price}</div>
-        <div class="chg ${changeNum == null ? "" : (changeNum >= 0 ? "up" : "down")}">${change}</div>
+        <div class="chg ${q.dp >= 0 ? "up" : "down"}">${change}</div>
       </div>
       <img class="logo" src="${logo}" alt="" />
     </div>
