@@ -96,8 +96,8 @@ body {
 }
 
 /* Clear (X) button on the left of the input */
-#clearBtn { left: auto; right: 10px; }
-#searchBtn { left: auto; right: 10px; }
+#clearBtn { left: auto; right: auto; }
+#searchBtn { left: auto; right: auto; }
 
 .hidden { display: none !important; }
 
