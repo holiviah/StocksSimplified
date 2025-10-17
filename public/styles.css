@@ -22,7 +22,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 24px;
+  padding: 16px 24px; /* slight top/bottom breathing room */
   overflow: hidden;
 }
 
@@ -33,7 +33,7 @@ body {
   gap: 24px;
   max-width: 1200px;
   width: 100%;
-  height: calc(100vh - 48px);
+  height: calc(100vh - 64px); /* account for new body padding */
   overflow: hidden;
 }
 
@@ -44,7 +44,7 @@ body {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  padding: 40px 50px 50px;
+  padding: 28px 36px 32px; /* slightly tighter panel padding */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -55,10 +55,10 @@ body {
 /* --- Heading --- */
 .panel h1 {
   font-family: "Instrument Serif", serif;
-  font-size: 56px;
+  font-size: 48px; /* a bit shorter heading */
   line-height: 1.1;
   letter-spacing: 1px;
-  margin-bottom: 28px;
+  margin-bottom: 18px; /* reduce gap below heading */
 }
 
 /* --- Search Bar --- */
@@ -68,14 +68,14 @@ body {
   gap: 8px;
   justify-content: center;
   position: relative;
-  margin-bottom: 28px;
+  margin-bottom: 18px; /* less space below search */
 }
 
 #searchInput {
   flex: 1;
   font-family: "Epilogue", sans-serif;
   font-size: 16px;
-  padding: 16px 56px 16px 18px;
+  padding: 12px 56px 12px 16px; /* slightly shorter input */
   border-radius: 999px;
   border: 1px solid #e7e7e7;
   outline: none;
@@ -85,7 +85,7 @@ body {
 
 #searchForm button {
   position: absolute;
-  right: 0px;
+  right: 8px; /* avoid clipping and odd spacing */
   height: 48px;
   width: 48px;
   border-radius: 999px;
@@ -96,8 +96,8 @@ body {
 }
 
 /* Clear (X) button on the left of the input */
-#clearBtn { left: auto; right: 0px; }
-#searchBtn { left: auto; right: 0px; }
+#clearBtn { left: auto; right: 8px; }
+#searchBtn { left: auto; right: 8px; }
 
 .hidden { display: none !important; }
 
@@ -114,7 +114,7 @@ body {
 .popular { text-align: left; margin-bottom: 12px; }
 .popular-hd { font-weight: 700; color: var(--muted); margin: 8px 0 6px; }
 .popular-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.popular-list li { display: grid; grid-template-columns: 80px 1fr 64px; align-items: center; background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border); border-radius: 10px; padding: 10px 12px; }
+.popular-list li { display: grid; grid-template-columns: 80px 1fr 64px; align-items: center; background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border); border-radius: 10px; padding: 8px 10px; }
 .popular-list .ticker { font-weight: 800; }
 .popular-list .name { color: var(--muted); font-size: 14px; }
 .popular-list button { justify-self: end; padding: 6px 10px; border-radius: 8px; border: 1px solid #d8d8d8; background: #fff; cursor: pointer; }
@@ -143,7 +143,7 @@ body {
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px; /* reduce card height a bit */
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -185,9 +185,9 @@ body {
 }
 
 .price {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .chg.up { color: #066d3b; }
@@ -225,9 +225,9 @@ details.learn ul {
 
 /* --- Cheat sheet --- */
 .cheatsheet { align-self: stretch; height: 100%; overflow: auto; }
-.cheatsheet .cs-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 16px 18px; margin-bottom: 10px; backdrop-filter: blur(10px); }
+.cheatsheet .cs-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 12px 14px; margin-bottom: 8px; backdrop-filter: blur(10px); }
 .cheatsheet .cs-title { font-weight: 800; }
-.cheatsheet .cs-item { background: rgba(255,255,255,0.9); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.cheatsheet .cs-item { background: rgba(255,255,255,0.9); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; }
 .cheatsheet .cs-item-hd { font-weight: 700; margin-bottom: 4px; }
 .cheatsheet .cs-item-sub { color: var(--muted); font-size: 14px; }
 
