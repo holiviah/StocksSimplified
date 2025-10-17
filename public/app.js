@@ -3,9 +3,7 @@ const input = document.querySelector("#searchInput");
 const results = document.querySelector("#results");
 const popularList = document.querySelector("#popularList");
 const clearBtn = document.querySelector("#clearBtn");
-const modal = document.querySelector('#modal');
-const modalClose = document.querySelector('#modalClose');
-const modalContent = document.querySelector('#modalContent');
+// removed modal references
 
 // Preload a few popular tickers on homepage
 const POPULAR = [
@@ -275,71 +273,6 @@ function renderCard({ meta, data }) {
   </div>`;
 }
 
-results.addEventListener('click', (e) => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  const symEl = card.querySelector('.sym');
-  const symbol = symEl ? symEl.textContent.trim() : null;
-  if (!symbol) return;
-  openModal(symbol);
-});
-
-modalClose?.addEventListener('click', closeModal);
-modal?.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal-backdrop')) closeModal();
-});
-
-function closeModal() {
-  modal?.classList.add('hidden');
-  modalContent.innerHTML = '';
-}
-
-async function openModal(symbol) {
-  modalContent.innerHTML = `<div class="pad">Loading ${symbol}…</div>`;
-  modal?.classList.remove('hidden');
-  try {
-    const r = await fetch(`/api/card/${symbol}`);
-    if (!r.ok) throw new Error(`Failed to load ${symbol}`);
-    const data = await r.json();
-    const candles = Array.isArray(data.candles) ? data.candles : [];
-    const closes = candles.map(c => c.c).filter(v => v != null);
-    modalContent.innerHTML = renderModalFromData(data, closes);
-  } catch (err) {
-    console.error('Modal load error', err);
-    modalContent.innerHTML = `<div class="pad">Failed to load data for ${symbol}.</div>`;
-  }
-}
-
-function renderModalFromData(data, closes) {
-  const p = data.profile || {};
-  const q = data.quote || {};
-  const prev = data.prev || {};
-  const name = p.name || data.symbol;
-  const last = (q.c != null) ? Number(q.c)
-    : (closes && closes.length ? Number(closes[closes.length-1])
-    : (prev?.c != null ? Number(prev.c) : null));
-
-  const w = 800, h = 320, pad = 30;
-  let chart = `<div class=\"pad\">No chart data available.</div>`;
-  if (closes && closes.length) {
-    const min = Math.min(...closes), max = Math.max(...closes);
-    const x = (i) => pad + (i / (closes.length - 1)) * (w - pad * 2);
-    const y = (v) => pad + (1 - (v - min) / (max - min || 1)) * (h - pad * 2);
-    const d = closes.map((v,i) => `${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ');
-    const area = `M${x(0)},${y(closes[0])} ` + closes.map((v,i)=>`L${x(i)},${y(v)}`).join(' ') + ` L${x(closes.length-1)},${h-pad} L${x(0)},${h-pad} Z`;
-    chart = `
-    <svg class=\"chart\" viewBox=\"0 0 ${w} ${h}\" preserveAspectRatio=\"none\">
-      <defs>
-        <linearGradient id=\"grad\" x1=\"0\" x2=\"0\" y1=\"0\" y2=\"1\">
-          <stop offset=\"0%\" stop-color=\"#22c55e\" stop-opacity=\"0.35\"/>
-          <stop offset=\"100%\" stop-color=\"#22c55e\" stop-opacity=\"0\"/>
-        </linearGradient>
-      </defs>
-      <rect x=\"${pad}\" y=\"${pad}\" width=\"${w-pad*2}\" height=\"${h-pad*2}\" fill=\"#fafafa\" stroke=\"#eee\" />
-      <path d=\"${area}\" fill=\"url(#grad)\" stroke=\"none\"/>
-      <path d=\"${d}\" fill=\"none\" stroke=\"#16a34a\" stroke-width=\"2\"/>
-    </svg>`;
-  }
 
   return `
     <div class=\"pad\">
