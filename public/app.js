@@ -213,6 +213,12 @@ function renderCard({ meta, data }) {
   // tiny sparkline values
   const points = candles.map(c => c.c).join(",");
   const yesterdayClose = prevCloseVal != null ? Number(prevCloseVal).toFixed(2) : "—";
+  const openToday = q.o != null ? Number(q.o).toFixed(2) : "—";
+  const dayHigh = q.h != null ? Number(q.h).toFixed(2) : "—";
+  const dayLow = q.l != null ? Number(q.l).toFixed(2) : "—";
+  const volume = (prev?.v != null ? prev.v : (candles.length ? candles[candles.length-1]?.v : null)) ?? null;
+  const volumeFmt = volume != null ? new Intl.NumberFormat().format(volume) : "—";
+  const mcap = p.marketCapitalization != null ? `${(Number(p.marketCapitalization)).toLocaleString()}M` : "—";
 
   return `
   <div class="card">
@@ -236,6 +242,28 @@ function renderCard({ meta, data }) {
       <div class="metric">
         <div class="label">Dividend</div>
         <div class="val">${div ? `$${div.cash_amount} on ${div.pay_date}` : "—"}</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="metric">
+        <div class="label">Open</div>
+        <div class="val">$${openToday}</div>
+      </div>
+      <div class="metric">
+        <div class="label">High / Low</div>
+        <div class="val">$${dayHigh} / $${dayLow}</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="metric">
+        <div class="label">Volume</div>
+        <div class="val">${volumeFmt}</div>
+      </div>
+      <div class="metric">
+        <div class="label">Market Cap</div>
+        <div class="val">${mcap}</div>
       </div>
     </div>
 
