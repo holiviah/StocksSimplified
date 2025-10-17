@@ -10,10 +10,7 @@ System Design: Databases and Dynamic Data.
 The goal is to make stock data less intimidating by simplifying search and presenting only the essentials.
 
 Users can:
-Search by **company** (ex., “Apple”)
-Search by **stock ticker** (ex., “AAPL”)
-Search by **industries**
-View a **cheat sheet** explaining key stock terms
+Search by **company** (ex., “Apple”), **stock ticker** (ex., “AAPL”), **industries**, and view a **cheat sheet** explaining key stock terms
 
 ## Data Sources
 This project integrates multiple APIs to provide accurate data:
