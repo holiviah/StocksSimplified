@@ -114,14 +114,24 @@ function renderCard({ meta, data }) {
   const candles = data.candles || [];
   const div = (data.dividends || [])[0];
 
-  const price = q.c ?? q.c?.toFixed?.(2) ?? "—";
-  const change = q.dp != null ? `${q.dp.toFixed(2)}%` : "—";
+  const lastCandleClose = candles.length ? candles[candles.length - 1]?.c : null;
+  const rawPrice = (q.c != null) ? q.c : (lastCandleClose != null ? lastCandleClose : (prev?.c != null ? prev.c : null));
+  const price = rawPrice != null ? Number(rawPrice).toFixed(2) : "—";
+
+  const prevCloseVal = prev?.c != null ? Number(prev.c) : null;
+  let changeNum = null;
+  if (q.dp != null) {
+    changeNum = Number(q.dp);
+  } else if (rawPrice != null && prevCloseVal != null && prevCloseVal !== 0) {
+    changeNum = ((Number(rawPrice) - prevCloseVal) / prevCloseVal) * 100;
+  }
+  const change = changeNum != null ? `${changeNum.toFixed(2)}%` : "—";
   const logo = p.logo || "https://via.placeholder.com/40";
   const name = p.name || meta.name || meta.ticker || data.symbol;
 
   // tiny sparkline values
   const points = candles.map(c => c.c).join(",");
-  const yesterdayClose = prev.c ?? "—";
+  const yesterdayClose = prevCloseVal != null ? Number(prevCloseVal).toFixed(2) : "—";
 
   return `
   <div class="card">
@@ -132,7 +142,7 @@ function renderCard({ meta, data }) {
       </div>
       <div class="price">
         <div class="now">$${price}</div>
-        <div class="chg ${q.dp >= 0 ? "up" : "down"}">${change}</div>
+        <div class="chg ${changeNum == null ? "" : (changeNum >= 0 ? "up" : "down")}">${change}</div>
       </div>
       <img class="logo" src="${logo}" alt="" />
     </div>
