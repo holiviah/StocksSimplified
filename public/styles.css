@@ -21,8 +21,8 @@ body {
   background-position: center;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 80px;
+  align-items: center;
+  padding: 0 24px;
   overflow: hidden;
 }
 
@@ -33,7 +33,7 @@ body {
   gap: 24px;
   max-width: 1200px;
   width: 100%;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 48px);
   overflow: hidden;
 }
 
@@ -218,7 +218,7 @@ details.learn ul {
 }
 
 /* --- Cheat sheet --- */
-.cheatsheet { align-self: start; height: 100%; overflow: auto; }
+.cheatsheet { align-self: stretch; height: 100%; overflow: auto; }
 .cheatsheet .cs-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 16px 18px; margin-bottom: 10px; backdrop-filter: blur(10px); }
 .cheatsheet .cs-title { font-weight: 800; }
 .cheatsheet .cs-item { background: rgba(255,255,255,0.9); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
@@ -227,7 +227,7 @@ details.learn ul {
 
 /* --- Responsive --- */
 @media (max-width: 600px) {
-  .layout { grid-template-columns: 1fr; height: calc(100vh - 100px); }
+  .layout { grid-template-columns: 1fr; height: calc(100vh - 32px); }
   .panel { padding: 30px 24px; }
 
   .panel h1 {
