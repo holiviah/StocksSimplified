@@ -274,16 +274,3 @@ function renderCard({ meta, data }) {
     
   </div>`;
 }
-
-
-  return `
-    <div class=\"pad\">
-      <div style=\"display:flex;align-items:center;gap:12px;\">
-        <div style=\"font-weight:800;font-size:18px;\">${data.symbol}</div>
-        <div style=\"color:#5b5b5b;\">${name}</div>
-      </div>
-      <div style=\"margin-top:6px;font-weight:800;font-size:22px;\">${last != null ? `$${last.toFixed(2)}` : ''}</div>
-    </div>
-    ${chart}
-  `;
-}
