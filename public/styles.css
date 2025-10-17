@@ -96,10 +96,8 @@ body {
 }
 
 /* Clear (X) button on the left of the input */
-#clearBtn {
-  left: 10px;
-  right: auto;
-}
+#clearBtn { left: auto; right: 10px; }
+#searchBtn { left: auto; right: 10px; }
 
 .hidden { display: none !important; }
 

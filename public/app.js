@@ -34,6 +34,7 @@ function showHome() {
   results.innerHTML = "";
   document.querySelector(".popular")?.classList.remove("hidden");
   clearBtn?.classList.add("hidden");
+  document.querySelector('#searchBtn')?.classList.remove('hidden');
 }
 
 clearBtn?.addEventListener("click", (e) => {
@@ -168,7 +169,9 @@ form.addEventListener("submit", async (e) => {
 
     results.innerHTML = displayable.map(renderCard).join("");
     document.querySelector(".popular")?.classList.add("hidden");
+    // Replace search icon with X on the right
     clearBtn?.classList.remove("hidden");
+    document.querySelector('#searchBtn')?.classList.add('hidden');
     
   } catch (error) {
     console.error("Search error:", error);
