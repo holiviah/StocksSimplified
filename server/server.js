@@ -242,12 +242,28 @@ app.get("/api/card/:symbol", async (req, res) => {
       }
     }
 
+    // Build candles with Finnhub fallback if Polygon returned none
+    let candles = Array.isArray(rangeR?.results) ? rangeR.results : [];
+    if ((!candles || candles.length === 0) && FINNHUB_KEY) {
+      try {
+        const now = Math.floor(Date.now() / 1000);
+        const from = now - 60 * 60 * 24 * 30; // last 30 days
+        const fhUrl = `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${from}&to=${now}&token=${FINNHUB_KEY}`;
+        const fh = await fetch(fhUrl).then(j);
+        if (fh && fh.s === 'ok' && Array.isArray(fh.c)) {
+          candles = fh.c.map((close, i) => ({ c: close, t: (fh.t && fh.t[i]) ? fh.t[i] * 1000 : undefined }));
+        }
+      } catch (_) {
+        // ignore
+      }
+    }
+
     res.json({
       symbol,
       profile: profileR,
       quote: quoteR,
       prev: prevOut,
-      candles: rangeR?.results || [],
+      candles,
       dividends
     });
   } catch (error) {
