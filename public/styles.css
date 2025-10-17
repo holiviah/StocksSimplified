@@ -22,7 +22,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 120px;
+  padding-top: 80px;
   overflow: hidden;
 }
 
@@ -221,7 +221,7 @@ details.learn ul {
 .cheatsheet { align-self: start; height: 100%; overflow: auto; }
 .cheatsheet .cs-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 16px 18px; margin-bottom: 10px; backdrop-filter: blur(10px); }
 .cheatsheet .cs-title { font-weight: 800; }
-.cheatsheet .cs-item { background: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.cheatsheet .cs-item { background: rgba(255,255,255,0.9); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
 .cheatsheet .cs-item-hd { font-weight: 700; margin-bottom: 4px; }
 .cheatsheet .cs-item-sub { color: var(--muted); font-size: 14px; }
 
