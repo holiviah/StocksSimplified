@@ -22,10 +22,18 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 160px;
+  padding-top: 120px;
 }
 
 /* --- Main Container --- */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  max-width: 1200px;
+  width: 100%;
+}
+
 .panel {
   background: var(--glass);
   backdrop-filter: blur(10px);
@@ -34,8 +42,6 @@ body {
   border-radius: var(--radius-xl);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   padding: 40px 50px 50px;
-  max-width: 1000px;
-  width: 100%;
   text-align: center;
 }
 
@@ -87,6 +93,15 @@ body {
   display: grid;
   gap: 16px;
 }
+
+/* --- Popular --- */
+.popular { text-align: left; margin-bottom: 12px; }
+.popular-hd { font-weight: 700; color: var(--muted); margin: 8px 0 6px; }
+.popular-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.popular-list li { display: grid; grid-template-columns: 80px 1fr 64px; align-items: center; background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border); border-radius: 10px; padding: 10px 12px; }
+.popular-list .ticker { font-weight: 800; }
+.popular-list .name { color: var(--muted); font-size: 14px; }
+.popular-list button { justify-self: end; padding: 6px 10px; border-radius: 8px; border: 1px solid #d8d8d8; background: #fff; cursor: pointer; }
 
 .loading, .error {
   text-align: center;
@@ -192,11 +207,18 @@ details.learn ul {
   font-size: 14px;
 }
 
+/* --- Cheat sheet --- */
+.cheatsheet { align-self: start; }
+.cheatsheet .cs-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 16px 18px; margin-bottom: 10px; backdrop-filter: blur(10px); }
+.cheatsheet .cs-title { font-weight: 800; }
+.cheatsheet .cs-item { background: rgba(255,255,255,0.8); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.cheatsheet .cs-item-hd { font-weight: 700; margin-bottom: 4px; }
+.cheatsheet .cs-item-sub { color: var(--muted); font-size: 14px; }
+
 /* --- Responsive --- */
 @media (max-width: 600px) {
-  .panel {
-    padding: 30px 24px;
-  }
+  .layout { grid-template-columns: 1fr; }
+  .panel { padding: 30px 24px; }
 
   .panel h1 {
     font-size: 42px;

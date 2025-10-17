@@ -10,13 +10,55 @@
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&family=Instrument+Serif:wght@400&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="panel">
-    <h1>Stocks Simplified</h1>
-    <form id="searchForm">
-      <input type="text" id="searchInput" placeholder="Search by stocks, companies, or industries" />
-      <button type="submit">🔍</button>
-    </form>
-    <div id="results"></div>
+  <div class="layout">
+    <div class="panel">
+      <h1>Stocks Simplified</h1>
+      <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Search by stocks, companies, or industries" />
+        <button type="submit">🔍</button>
+      </form>
+
+      <section class="popular">
+        <div class="popular-hd">Popular</div>
+        <ul id="popularList" class="popular-list"></ul>
+      </section>
+
+      <div id="results"></div>
+    </div>
+
+    <aside class="cheatsheet">
+      <div class="cs-card">
+        <div class="cs-title">Cheat sheet</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">Ticker symbol</div>
+        <div class="cs-item-sub">short code used to identify a stock<br/>(e.g., AAPL for Apple).</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">Exchange</div>
+        <div class="cs-item-sub">where the stock trades (e.g., NASDAQ).</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">% Change</div>
+        <div class="cs-item-sub">how much the stock moved today</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">Price</div>
+        <div class="cs-item-sub">current cost per share.</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">Volume</div>
+        <div class="cs-item-sub">number of shares traded in a day.</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">Dividend yield</div>
+        <div class="cs-item-sub">% of price paid to shareholders yearly.</div>
+      </div>
+      <div class="cs-item">
+        <div class="cs-item-hd">YTD (Year-to-Date) return</div>
+        <div class="cs-item-sub">how much it’s gained or lost this year.</div>
+      </div>
+    </aside>
   </div>
   <script src="./app.js" defer></script>
 </body>

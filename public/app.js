@@ -1,6 +1,32 @@
 const form = document.querySelector("#searchForm");
 const input = document.querySelector("#searchInput");
 const results = document.querySelector("#results");
+const popularList = document.querySelector("#popularList");
+
+// Preload a few popular tickers on homepage
+const POPULAR = [
+  { ticker: "AAPL", name: "Apple Inc" },
+  { ticker: "MSFT", name: "Microsoft Corp" },
+  { ticker: "GOOGL", name: "Alphabet Inc Class A" },
+  { ticker: "AMZN", name: "Amazon.com Inc" }
+];
+
+if (popularList) {
+  popularList.innerHTML = POPULAR.map(p => `
+    <li>
+      <div class="ticker">${p.ticker}</div>
+      <div class="name">${p.name}</div>
+      <button data-ticker="${p.ticker}">View</button>
+    </li>
+  `).join("");
+
+  popularList.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-ticker]");
+    if (!btn) return;
+    input.value = btn.dataset.ticker;
+    form.dispatchEvent(new Event("submit"));
+  });
+}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -196,13 +222,6 @@ function renderCard({ meta, data }) {
       <!-- you can draw a tiny canvas/inline SVG later -->
     </div>
 
-    <details class="learn">
-      <summary>What does this mean?</summary>
-      <ul>
-        <li><b>Close:</b> last traded price from the previous trading day.</li>
-        <li><b>% Change:</b> today vs yesterday’s close.</li>
-        <li><b>Dividend:</b> cash paid per share, ex-date = must own before to receive.</li>
-      </ul>
-    </details>
+    
   </div>`;
 }
