@@ -134,7 +134,13 @@ function renderCard({ meta, data }) {
   const rawPrice = (q.c != null) ? q.c : (lastCandleClose != null ? lastCandleClose : (prev?.c != null ? prev.c : null));
   const price = rawPrice != null ? Number(rawPrice).toFixed(2) : "—";
 
-  const prevCloseVal = prev?.c != null ? Number(prev.c) : null;
+  const prevCloseVal = (prev?.c != null)
+    ? Number(prev.c)
+    : (q?.pc != null)
+      ? Number(q.pc)
+      : (lastCandleClose != null)
+        ? Number(lastCandleClose)
+        : null;
   let changeNum = null;
   if (q.dp != null) {
     changeNum = Number(q.dp);
