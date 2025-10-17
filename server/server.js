@@ -207,13 +207,48 @@ app.get("/api/card/:symbol", async (req, res) => {
       fetch(`https://api.polygon.io/v3/reference/dividends?ticker=${symbol}&limit=3&apiKey=${POLYGON_KEY}`).then(j)
     ]);
 
+    // Derive a reliable previous close
+    const polygonPrev = prevR?.results?.[0] || null;
+    const lastCandle = (rangeR?.results || []).length ? (rangeR.results[rangeR.results.length - 1]) : null;
+    const derivedPrevClose = (polygonPrev?.c != null)
+      ? polygonPrev.c
+      : (quoteR?.pc != null)
+        ? quoteR.pc
+        : (lastCandle?.c != null)
+          ? lastCandle.c
+          : null;
+    const prevOut = polygonPrev || (derivedPrevClose != null ? { c: derivedPrevClose } : null);
+
+    // Ensure we have some dividends data; fall back to Finnhub if Polygon returns none
+    let dividends = divR?.results || [];
+    if (!Array.isArray(dividends) || dividends.length === 0) {
+      try {
+        const to = new Date();
+        const from = new Date(); from.setFullYear(to.getFullYear() - 2);
+        const toISO = (d) => d.toISOString().slice(0,10);
+        const fhUrl = `https://finnhub.io/api/v1/stock/dividend?symbol=${symbol}&from=${toISO(from)}&to=${toISO(to)}&token=${FINNHUB_KEY}`;
+        const fh = await fetch(fhUrl).then(j);
+        if (Array.isArray(fh) && fh.length) {
+          dividends = fh
+            .sort((a,b) => (b.paymentDate || b.payDate || b.date || '').localeCompare(a.paymentDate || a.payDate || a.date || ''))
+            .slice(0, 3)
+            .map(d => ({
+              cash_amount: d.amount ?? d.dividend ?? null,
+              pay_date: d.paymentDate || d.payDate || d.date || null
+            }));
+        }
+      } catch (e) {
+        // ignore fallback errors, keep empty dividends
+      }
+    }
+
     res.json({
       symbol,
       profile: profileR,
       quote: quoteR,
-      prev: prevR?.results?.[0] || null,
+      prev: prevOut,
       candles: rangeR?.results || [],
-      dividends: divR?.results || []
+      dividends
     });
   } catch (error) {
     console.error("Card API error:", error);

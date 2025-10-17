@@ -62,6 +62,18 @@ form.addEventListener("submit", async (e) => {
       }
     }
 
+    // Deduplicate by ticker before proceeding
+    {
+      const seen = new Set();
+      companies = companies.filter(c => {
+        const t = c.ticker && String(c.ticker).toUpperCase();
+        if (!t) return false;
+        if (seen.has(t)) return false;
+        seen.add(t);
+        return true;
+      }).slice(0, 8);
+    }
+
     if (companies.length === 0) {
       let suggestion = "";
       if (isStockSymbol) {
