@@ -22,8 +22,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 120px 24px 120px; /* more space at top and bottom */
-  overflow: hidden;
+  /* Use dynamic viewport on supported browsers to avoid URL bar jump */
+  padding: clamp(16px, 4vw, 120px) clamp(16px, 4vw, 24px);
+  min-height: 100dvh;
+  /* allow scrolling everywhere */
+  overflow: auto;
 }
 
 /* --- Main Container --- */
@@ -33,10 +36,11 @@ body {
   gap: 24px;
   max-width: 1200px;
   width: 100%;
-  height: calc(100vh - 240px); /* match body vertical padding */
-  overflow: hidden;
+  /* let content define height */
+  height: auto;
 }
 
+/* Panels should grow with content and be scrollable if needed */
 .panel {
   background: var(--glass);
   backdrop-filter: blur(10px);
@@ -48,14 +52,15 @@ body {
   text-align: center;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  /* remove fixed height and hidden overflow */
+  height: auto;
+  overflow: visible;
 }
 
 /* --- Heading --- */
 .panel h1 {
   font-family: "Instrument Serif", serif;
-  font-size: 56px;
+  font-size: clamp(32px, 5vw, 56px);
   line-height: 1.1;
   letter-spacing: 1px;
   margin-bottom: 28px;
@@ -75,12 +80,17 @@ body {
   flex: 1;
   font-family: "Epilogue", sans-serif;
   font-size: 16px;
-  padding: 16px 56px 16px 18px;
+  padding: 16px 56px 16px 18px; /* space for the icon */
   border-radius: 999px;
   border: 1px solid #e7e7e7;
   outline: none;
   background: #fff;
   width: 100%;
+}
+
+/* make sure input has enough right padding when buttons change size */
+@media (max-width: 420px) {
+  #searchInput { padding-right: 60px; }
 }
 
 #searchForm button {
@@ -93,6 +103,8 @@ body {
   background: #fff;
   cursor: pointer;
   font-size: 18px;
+  display: grid;
+  place-items: center;
 }
 
 #clearBtn { left: auto; right: 2px; }
@@ -107,23 +119,37 @@ body {
 .modal .chart { width: 100%; height: 320px; }
 .modal .pad { padding: 18px 20px; }
 
+/* Results should be allowed to grow and scroll within the page */
 #results {
   margin-top: 20px;
   display: grid;
   gap: 16px;
   flex: 1 1 auto;
   min-height: 0;
-  overflow: auto;
 }
 
 /* --- Popular --- */
 .popular { text-align: left; margin-bottom: 12px; }
 .popular-hd { font-weight: 700; color: var(--muted); margin: 8px 0 6px; }
-.popular-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-.popular-list li { display: grid; grid-template-columns: 80px 1fr 64px; align-items: center; background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border); border-radius: 10px; padding: 10px 12px; }
+.popular-list {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 8px;
+}
+.popular-list li {
+  display: grid;
+  grid-template-columns: 72px 1fr auto;
+  align-items: center;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px; padding: 10px 12px;
+}
 .popular-list .ticker { font-weight: 800; }
 .popular-list .name { color: var(--muted); font-size: 14px; }
-.popular-list button { justify-self: end; padding: 6px 10px; border-radius: 8px; border: 1px solid #d8d8d8; background: #fff; cursor: pointer; }
+.popular-list button {
+  justify-self: end; padding: 6px 10px;
+  border-radius: 8px; border: 1px solid #d8d8d8;
+  background: #fff; cursor: pointer;
+}
 
 .loading, .error {
   text-align: center;
@@ -133,10 +159,7 @@ body {
   border: 1px solid var(--glass-border);
 }
 
-.loading {
-  color: var(--muted);
-  font-style: italic;
-}
+.loading { color: var(--muted); font-style: italic; }
 
 .error {
   color: #9a0415;
@@ -160,51 +183,35 @@ body {
 }
 
 .card-hd {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 40px;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
-.card-hd > div {
-  flex: 1;
-}
-
 .card .logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
-  order: 2;
+  width: 40px; height: 40px;
+  border-radius: 8px; object-fit: cover;
+  grid-column: 3;
 }
 
 .card .name {
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 700; font-size: 18px;
 }
 
 .card .sym {
-  font-weight: 400;
-  color: var(--muted);
-  margin-left: 6px;
+  font-weight: 400; color: var(--muted); margin-left: 6px;
 }
 
-.price {
-  font-size: 24px;
-  font-weight: 800;
-  margin-top: 6px;
-}
+.price { font-size: 24px; font-weight: 800; margin-top: 6px; }
 
 .chg.up { color: #066d3b; }
 .chg.down { color: #9a0415; }
 
 .metric {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 6px;
-  font-size: 14px;
-  color: var(--muted);
+  display: flex; justify-content: space-between;
+  margin-top: 6px; font-size: 14px; color: var(--muted);
 }
 
 details.learn {
@@ -215,34 +222,96 @@ details.learn {
   padding: 10px 14px;
 }
 
-details.learn summary {
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 15px;
-}
+details.learn summary { cursor: pointer; font-weight: 700; font-size: 15px; }
 
 details.learn ul {
-  padding-left: 18px;
-  text-align: left;
-  color: var(--muted);
-  margin: 8px 0 0;
-  font-size: 14px;
+  padding-left: 18px; text-align: left; color: var(--muted);
+  margin: 8px 0 0; font-size: 14px;
 }
 
 /* --- Cheat sheet --- */
-.cheatsheet { align-self: stretch; height: 100%; overflow: auto; }
-.cheatsheet .cs-card { background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius-xl); padding: 16px 18px; margin-bottom: 10px; backdrop-filter: blur(10px); }
+.cheatsheet { align-self: stretch; height: auto; }
+.cheatsheet .cs-card {
+  background: var(--glass); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl); padding: 16px 18px; margin-bottom: 10px;
+  backdrop-filter: blur(10px);
+}
 .cheatsheet .cs-title { font-weight: 800; }
-.cheatsheet .cs-item { background: rgba(255,255,255,0.9); border: 1px solid var(--glass-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.cheatsheet .cs-item {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+}
 .cheatsheet .cs-item-hd { font-weight: 700; margin-bottom: 4px; }
 .cheatsheet .cs-item-sub { color: var(--muted); font-size: 14px; }
 
-/* --- Responsive --- */
-@media (max-width: 600px) {
-  .layout { grid-template-columns: 1fr; height: calc(100vh - 32px); }
-  .panel { padding: 30px 24px; }
+/* --------- Responsive --------- */
 
-  .panel h1 {
-    font-size: 42px;
+/* Tablet down: give more room to main panel, shrink side column */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
   }
+}
+
+/* Phablet down: single column, natural document flow, scrollable page */
+@media (max-width: 780px) {
+  body {
+    align-items: stretch;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .panel {
+    padding: 28px 22px;
+  }
+
+  /* Cards a little tighter */
+  .card { padding: 16px; }
+  .price { font-size: 22px; }
+}
+
+/* Small phones */
+@media (max-width: 600px) {
+  /* previous mobile block, but stronger fixes for heights */
+  .layout { grid-template-columns: 1fr; }
+  .panel { padding: 24px 18px; }
+
+  #results { /* allow normal page scroll instead of nested scrolls */
+    max-height: none;
+  }
+
+  /* Popular rows simplify */
+  .popular-list li {
+    grid-template-columns: 64px 1fr auto;
+    padding: 10px 10px;
+  }
+
+  /* Card header in two rows on tiny screens */
+  .card-hd {
+    grid-template-columns: 1fr 40px;
+    grid-template-areas:
+      "title logo"
+      "price logo";
+    align-items: center;
+  }
+  .card .logo { grid-area: logo; }
+  .card .name { grid-area: title; }
+  .price { grid-area: price; margin-top: 4px; }
+}
+
+/* Ultra small devices */
+@media (max-width: 360px) {
+  .panel h1 { font-size: 28px; }
+  #searchForm button { height: 42px; width: 42px; }
+  #searchInput { padding: 14px 54px 14px 16px; }
+}
+
+/* Motion safety */
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
 }
